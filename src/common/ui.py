@@ -16,3 +16,13 @@ def plot(data: list[tuple[str, np.ndarray]], title: str):
         plt.plot(item[1], label=item[0])
     plt.legend()
     plt.show()
+
+
+def render_v():
+    # TODO:
+    pass
+
+
+def render_q():
+    # TODO:
+    pass

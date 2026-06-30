@@ -1,7 +1,7 @@
 from bandit import Bandit
 from src.ch01.greedy.agents import Agent, AlphaAgent
 import numpy as np
-import src.ui as ui
+import src.common.ui as ui
 
 arm_num = 10
 

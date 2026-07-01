@@ -1,6 +1,5 @@
-from src.common.enums import GridArgs
+from src.common.types import GridArgs, Action
 from src.common.grid import Grid, Coord
-from src.common.enums import Action
 
 args = GridArgs(
     goal_cell=Coord(x=3, y=0),
@@ -23,4 +22,6 @@ print(grid.get_v_table())  # 迭代策略评估
 
 grid.get_optimal_policy()  # 策略迭代法求最优策略
 
-grid.get_optimal_policy(use_value_iteration=True, use_cache=False)  # 价值迭代法求最优策略
+grid.get_optimal_policy(
+    use_value_iteration=True, use_cache=False
+)  # 价值迭代法求最优策略

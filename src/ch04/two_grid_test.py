@@ -1,6 +1,5 @@
-from src.common.enums import GridArgs
+from src.common.types import GridArgs, Action
 from src.common.grid import Grid, Coord
-from src.common.enums import Action
 
 # 迭代策略评估
 #

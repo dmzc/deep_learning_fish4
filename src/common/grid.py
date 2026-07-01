@@ -1,5 +1,4 @@
-from src.common.interfaces import IGrid
-from src.common.enums import Coord, Action, GridArgs
+from src.common.types import IGrid, Coord, Action, GridArgs
 import numpy as np
 
 
@@ -20,10 +19,17 @@ class Grid(IGrid):
 
     __actions = [Action.up, Action.down, Action.left, Action.right]
 
+    __agent_state: Coord
+
     def __init__(self, args: GridArgs):
         self.__args = args
+        self.do_init()
+
+    def do_init(self) -> None:
+        args = self.__args
         self.__v_table = None
         self.__optimal_policy = None
+        self.__agent_state = args.agent_cell
         __immediate_rewards = self.__immediate_rewards = np.zeros(
             (args.y_max, args.x_max)
         )
@@ -44,6 +50,7 @@ class Grid(IGrid):
         if reward_cells is not None:
             for reward_cell in reward_cells:
                 __immediate_rewards[reward_cell.y, reward_cell.x] = reward_score
+        pass
 
     @property
     def height(self) -> int:
@@ -115,7 +122,7 @@ class Grid(IGrid):
                     continue
                 score = 0.0
                 for action in self.actions:
-                    p = self.get_probability(state, action)
+                    p = self.__get_probability(state, action)
                     if p != 0.0:  # 概率为0的动作不用管
                         next_state = self.next_state(action=action, state=state)
                         reward = self.reward(
@@ -142,6 +149,19 @@ class Grid(IGrid):
                 else self.__policy_iteration(delta=delta)
             )
         return self.__transform()
+
+    def step(self, action: Action) -> tuple[Coord, float, bool]:
+        current_state = self.__agent_state
+        next_state = self.next_state(state=current_state, action=action)
+        reward = self.reward(state=current_state, action=action, next_state=next_state)
+        self.__agent_state = next_state
+        return (next_state, reward, self.__agent_state == self.__args.goal_cell)
+
+    def reset(self):
+        self.do_init()
+
+    def get_agent_state(self):
+        return self.__agent_state
 
     """
     策略迭代法：
@@ -236,7 +256,7 @@ class Grid(IGrid):
                     policies[y][x] = self.get_action_by_id(value).name
         return policies
 
-    def get_probability(self, coord: Coord, action: Action) -> float:
+    def __get_probability(self, coord: Coord, action: Action) -> float:
         optimal_policy = self.__optimal_policy
         if optimal_policy is not None:
             t_action = self.get_action_by_id(optimal_policy[coord.y, coord.x])
